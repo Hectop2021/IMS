@@ -1,9 +1,11 @@
-﻿@page "/addinventory"
+﻿@page "/editinventory/{invId:int}"
 
 @using IMS.UseCases.Inventories
-@inject IAddInventoryUseCase AddInventoryUseCase
+@inject IViewInventoryByIdUseCase ViewInventoryByIdUseCase
+@inject IEditInventoryUseCase EditInventoryUseCase
 @inject NavigationManager NavigationManager
 
+<h3>Edit Inventory</h3>
 <h3>Add Inventory</h3>
 <br />
 <EditForm Model="inventory" OnValidSubmit="SaveInventory">
@@ -40,11 +42,20 @@
 </EditForm>
 
 @code {
+
+    [Parameter]
+    public int invId { get; set; }
+
     private Inventory inventory = new Inventory();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.inventory = await ViewInventoryByIdUseCase.ExecuteAsync(this.invId);
+    }
 
     private async Task SaveInventory()
     {
-        await AddInventoryUseCase.ExecuteAsync(inventory);
+        await EditInventoryUseCase.ExecuteAsync(this.inventory);
         NavigationManager.NavigateTo("/inventories");
     }
 
