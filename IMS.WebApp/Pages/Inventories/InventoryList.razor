@@ -1,7 +1,8 @@
 ﻿@page "/inventories"
+@using static IMS.WebApp.Controls.Common.AutoCompleteComponent
 
-@inject IViewInventoriesByNameUseCase ViewInventoriesByNameUseCase
 @inject NavigationManager NavigationManager
+@inject IViewInventoriesByNameUseCase ViewInventoriesByNameUseCase
 
 <h3>Inventory List</h3>
 <br />
@@ -12,11 +13,12 @@
 <br />
 <InventoryListComponent SearchTerm="@searchTerm"></InventoryListComponent>
 <br />
-<button type="button" class="btn btn-primary"
-    @onclick="AddInventory">Add Inventory
-</button>
+<button type="button" 
+        class="btn btn-primary" 
+        @onclick="AddInventory">Add Inventory</button>
 
-@code {
+@code 
+{
     private string searchTerm = string.Empty;
 
     private void OnInventorySearch(string searchTerm)
@@ -28,5 +30,5 @@
     {
         NavigationManager.NavigateTo("/addinventory");
     }
-}
 
+}
