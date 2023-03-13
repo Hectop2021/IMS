@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IMS.CoreBusiness
 {
-    public class InventoryTransactions
+    public class InventoryTransaction
     {
         public int InventoryTransactionId { get; set; }
 
@@ -26,7 +26,7 @@ namespace IMS.CoreBusiness
         [Required]
         public int QuantityAfter { get; set; }
 
-        public double UnitPrice { get; set; }
+        public double? UnitPrice { get; set; }
 
         [Required]
         public DateTime TransactionDate { get; set; }

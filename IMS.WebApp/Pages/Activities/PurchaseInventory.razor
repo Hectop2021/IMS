@@ -9,6 +9,10 @@
 @inject IViewInventoryByIdUseCase ViewInventoryByIdUseCase
 @inject IPurchaseInventoryUseCase PurchaseInventoryUseCase
 
+@inject IJSRuntime JSRuntime
+
+@attribute [Authorize(Policy = "Purchasers")]
+
 <h3>Purchase Inventory</h3>
 <br />
 
@@ -51,26 +55,52 @@
 </EditForm>
 
 @code {
-    private PurchaseViewModel purchaseViewModel = new PurchaseViewModel();
+    private AuthenticationState? authenticationState;
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationStateTask { get; set; }
+
+    private PurchaseViewModel purchaseViewModel = new PurchaseViewModel();
     private Inventory? selectedInventory = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (authenticationStateTask != null)
+            authenticationState = await authenticationStateTask;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        //  firstRender is T when page is first loaded, then changed to F
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            JSRuntime.InvokeVoidAsync("PreventFormSubmission", "purchase-form");          //  start interacting with Javascript
+        }
+    }
 
     private async Task Purchase()
     {
-        await PurchaseInventoryUseCase.ExecuteAsync(
-            this.purchaseViewModel.PONumber,
-            this.selectedInventory,
-            this.purchaseViewModel.QuantityToPurchase,
-            "admin"
-        );
+        if (this.selectedInventory != null &&
+            authenticationState != null &&
+            !string.IsNullOrWhiteSpace(authenticationState.User?.Identity?.Name)
+            )
+        {
+            await PurchaseInventoryUseCase.ExecuteAsync(
+                this.purchaseViewModel.PONumber,
+                this.selectedInventory,
+                this.purchaseViewModel.QuantityToPurchase,
+                authenticationState.User.Identity.Name);
+        }
 
         this.purchaseViewModel = new PurchaseViewModel();
         this.selectedInventory = null;
     }
 
-    private List<ItemViewModel>? SearchInventory(string name)
+    private async Task<List<ItemViewModel>?> SearchInventory(string name)
     {
-        var list = ViewInventoriesByNameUseCase.ExecuteAsync(name).GetAwaiter().GetResult();
+        var list = await ViewInventoriesByNameUseCase.ExecuteAsync(name);
 
         if (list == null) return null;
 

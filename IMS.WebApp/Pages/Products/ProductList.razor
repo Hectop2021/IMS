@@ -3,6 +3,8 @@
 @inject IViewProductsByNameUseCase ViewProductsByNameUseCase
 @inject NavigationManager NavigationManager
 
+@attribute [Authorize(Policy = "Inventory")]
+
 <h3>Product List</h3>
 <br />
 

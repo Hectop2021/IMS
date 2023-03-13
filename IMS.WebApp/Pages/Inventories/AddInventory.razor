@@ -1,8 +1,10 @@
 ﻿@page "/addinventory"
 
-@using IMS.UseCases.Inventories
+@*@using IMS.UseCases.Inventories*@
 @inject IAddInventoryUseCase AddInventoryUseCase
 @inject NavigationManager NavigationManager
+
+@attribute [Authorize(Policy = "Inventory")]
 
 <h3>Add Inventory</h3>
 <br />

@@ -14,6 +14,6 @@ namespace IMS.CoreBusiness
         public int InventoryId { get; set; }
         public Inventory? Inventory { get; set; } 
 
-        public double InventoryQuantity { get; set; }
+        public int InventoryQuantity { get; set; }
     }
 }
